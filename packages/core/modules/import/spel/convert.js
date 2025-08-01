@@ -96,7 +96,12 @@ const convertOp = (spel, conv, config, meta, parentSpel = null) => {
       negative = !negative;
     }
     spel.children[0].negative = negative;
-    return convertToTree(spel.children[0], conv, config, meta, parentSpel);
+    const result = convertToTree(spel.children[0], conv, config, meta, parentSpel);
+    // If the result is undefined, try converting as an argument directly
+    if (result === undefined) {
+      return convertArg(spel.children[0], conv, config, meta, parentSpel);
+    }
+    return result;
   }
 
   // between
@@ -331,6 +336,28 @@ export const convertArg = (spel, conv, config, meta, parentSpel = null) => {
      * @deprecated
      */
     return convertCaseValueConcat(spel, conv, config, meta);
+  } else if (spel.type === "op-minus" && spel.children?.length === 1) {
+    // Handle unary minus operations (negative numbers)
+    const child = spel.children[0];
+    if (SpelPrimitiveTypes[child.type] === "number") {
+      let value = child.val;
+      const valueType = SpelPrimitiveTypes[child.type];
+      // Apply the negative sign
+      value = -value;
+      return {
+        valueSrc: "value",
+        valueType,
+        value,
+      };
+    }
+    // For non-primitive types, try to convert the child and negate the result
+    const childResult = convertArg(child, conv, config, meta, spel);
+    if (childResult && childResult.valueSrc === "value" && childResult.valueType === "number") {
+      return {
+        ...childResult,
+        value: -childResult.value
+      };
+    }
   }
 
   let maybe = convertFunc(spel, conv, config, meta, parentSpel);

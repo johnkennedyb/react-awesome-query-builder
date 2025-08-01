@@ -1861,6 +1861,7 @@ export const spel_with_cases = "(str == '222' ? is_string : (num == 4 ? is_numbe
 export const spel_with_cases_simple = "(str == '222' ? foo : bar)";
 export const spel_with_cases_vars = "(str == '222' ? str : str2)";
 export const spel_with_cases_and_concat = "(str == '222' ? foo : foo + bar)";
+export const spel_with_cases_with_negative = "(num > 0 ? num : -1)";
 export const spel_with_default_case_field = "str2";
 export const spel_with_default_case_func = "str2.toLowerCase()";
 
@@ -1889,6 +1890,14 @@ export const with_cases_vars = {
     {"==": [{"var": "str"}, "222"]},
     {"var": "str"},
     {"var": "str2"}
+  ]
+};
+
+export const with_cases_with_negative = {
+  "if": [
+    {">":[{"var":"num"},0]},
+    {"var":"num"},
+    -1
   ]
 };
 

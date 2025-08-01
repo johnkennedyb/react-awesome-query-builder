@@ -60,6 +60,12 @@ describe("rare features", () => {
     });
   });
 
+  describe("import from SpEL with negative number in ternary", () => {
+    export_checks(configs.with_all_types, inits.spel_with_cases_with_negative, "SpEL", {
+      "spel": "(num > 0 ? num : -1)",
+    });
+  });
+
   describe("import uses fieldName in group", () => {
     export_checks(configs.with_fieldName, inits.with_fieldName_in_group, "JsonLogic", {
       "spel": "results.?[outcome == 3].size() > 0",
